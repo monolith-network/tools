@@ -6,10 +6,10 @@
 #include <csignal>
 #include <atomic>
 #include <crate/networking/message_server.hpp>
+#include <crate/metrics/streams/stream_data.hpp>
 #include <crate/externals/simplejson/json.hpp>
 
 using namespace std::chrono_literals;
-
 namespace {
    struct configuration {
       std::string stream_server_address;
@@ -18,21 +18,30 @@ namespace {
       uint32_t metra_port {0};
    };
 
-   configuration g_config;
+   std::atomic<bool> active {true};
 
    class receiver : public crate::networking::message_receiver_if {
    public:
       virtual void receive_message(std::string message) override final {
+
          std::cout << message << std::endl;
+
+         crate::metrics::streams::stream_data_v1 data;
+         if (!data.decode_from(message)) {
+            std::cerr << "Unable to decode stream data: " << message << std::endl;
+
+            // Kill the server
+            active.store(false);
+         }
       }
    };
 
    receiver message_receiver;
+   configuration g_config;
    std::string registration_path;
    std::string deregistration_path;
    httplib::Client* http_client {nullptr};
    crate::networking::message_server* server {nullptr};
-   std::atomic<bool> active {true};
    std::atomic<bool> handling_signal {false};
 }
 
@@ -161,7 +170,6 @@ void issue_command(const std::string& cmd) {
    } else {
       std::cerr << "Unknown result from submitting command to endpoint\n";
    }
-
 }
 
 void handle_signal(int signal) {
