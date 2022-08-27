@@ -1,0 +1,13 @@
+[demu]
+device_name = "sensor_0"
+location_name = "bedroom"
+sensors = [
+   "temperature", "motion", "humidity", "air_pressure", "flame", "light"
+]
+environment_detail = [
+   "dry", "high_traffic", "hot"
+]
+submission_server_address = "0.0.0.0"
+submission_server_port = 8081
+registrar_address = "0.0.0.0"
+registrar_port = 4096
