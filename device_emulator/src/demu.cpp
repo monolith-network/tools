@@ -45,12 +45,12 @@ int main(int argc, char **argv) {
 
    // Build a node object to register with registrar
    //
-   crate::registrar::node_v1 demu(g_config.device_name);
+   crate::registrar::node_v1_c demu(g_config.device_name);
 
    // Add sensors to registrar object
    //
    for(auto sensor : g_config.sensors) {
-      crate::registrar::node_v1::sensor v1_sensor;
+      crate::registrar::node_v1_c::sensor v1_sensor;
       v1_sensor.id = sensor->get_uuid();
       v1_sensor.description = "A sensor of mysterious origins";
       v1_sensor.type = demu::sensor_type_to_string(sensor->get_type());
@@ -65,13 +65,13 @@ int main(int argc, char **argv) {
 
    // Submit the node for registration
    //
-   crate::registrar::helper registrar_helper(g_config.address, g_config.http_port);
-   if (registrar_helper.submit(demu) != crate::registrar::helper::result::SUCCESS) {
+   crate::registrar::helper_c registrar_helper(g_config.address, g_config.http_port);
+   if (registrar_helper.submit(demu) != crate::registrar::helper_c::result::SUCCESS) {
       std::cerr << "\nFailed to register node with registrar" << std::endl;
       std::exit(1);
    }
 
-   auto writer = crate::networking::message_writer(
+   auto writer = crate::networking::message_writer_c(
       g_config.address, 
       g_config.metric_submission_port
    );

@@ -41,7 +41,7 @@ namespace demu {
             _uuid = std::string(u);
          }
       virtual ~sensor_if(){}
-      virtual crate::metrics::sensor_reading_v1 get_value() = 0;
+      virtual crate::metrics::sensor_reading_v1_c get_value() = 0;
       sensor_type get_type() const { return _type; }
       std::string get_node_id() const { return _node_id; }
       std::string get_uuid() const { return _uuid; }

@@ -30,7 +30,7 @@ namespace {
 
          std::cout << message << std::endl;
 
-         crate::metrics::streams::stream_data_v1 data;
+         crate::metrics::streams::stream_data_v1_c data;
          if (!data.decode_from(message)) {
             std::cerr << "Unable to decode stream data: " << message << std::endl;
 
@@ -43,7 +43,7 @@ namespace {
    receiver message_receiver;
    configuration g_config;
    httplib::Client* http_client {nullptr};
-   crate::networking::message_server* server {nullptr};
+   crate::networking::message_server_c* server {nullptr};
    std::atomic<bool> handling_signal {false};
 }
 
@@ -95,7 +95,7 @@ void load_config(const std::string& file) {
    
    // Start the server with the receiver that will dump everything
    //
-   server = new crate::networking::message_server(
+   server = new crate::networking::message_server_c(
       g_config.stream_server_address, 
       g_config.stream_server_port, 
       &message_receiver);
@@ -110,29 +110,29 @@ void load_config(const std::string& file) {
    http_client = new httplib::Client(g_config.address, g_config.http_port);
 }
 
-void handle_response(crate::metrics::streams::helper::result result) {
+void handle_response(crate::metrics::streams::helper_c::result result) {
    switch (result) {
-      case crate::metrics::streams::helper::result::SUCCESS: {
+      case crate::metrics::streams::helper_c::result::SUCCESS: {
          std::cout << "SUCCESS" << std::endl;
          return;
       }
-      case crate::metrics::streams::helper::result::UNABLE_TO_REACH_MONOLITH: {
+      case crate::metrics::streams::helper_c::result::UNABLE_TO_REACH_MONOLITH: {
          std::cerr << "UNABLE_TO_REACH_MONOLITH" << std::endl;
          std::exit(1);
       }
-      case crate::metrics::streams::helper::result::FAILED_TO_PARSE_RESPONSE: {
+      case crate::metrics::streams::helper_c::result::FAILED_TO_PARSE_RESPONSE: {
          std::cerr << "FAILED_TO_PARSE_RESPONSE" << std::endl;
          std::exit(1);
       }
-      case crate::metrics::streams::helper::result::INTERNAL_SERVER_ERROR: {
+      case crate::metrics::streams::helper_c::result::INTERNAL_SERVER_ERROR: {
          std::cerr << "INTERNAL_SERVER_ERROR" << std::endl;
          std::exit(1);
       }
-      case crate::metrics::streams::helper::result::UNKNOWN_ERROR: {
+      case crate::metrics::streams::helper_c::result::UNKNOWN_ERROR: {
          std::cerr << "UNKNOWN_ERROR" << std::endl;
          std::exit(1);
       }
-      case crate::metrics::streams::helper::result::BAD_REQUEST: {
+      case crate::metrics::streams::helper_c::result::BAD_REQUEST: {
          std::cerr << "BAD_REQUEST" << std::endl;
          std::exit(1);
       }
@@ -141,7 +141,7 @@ void handle_response(crate::metrics::streams::helper::result result) {
 
 void register_as_stream_receiver() {
    std::cout << "Registering as stream receiver" << std::endl;
-   crate::metrics::streams::helper helper(g_config.address, g_config.http_port);
+   crate::metrics::streams::helper_c helper(g_config.address, g_config.http_port);
    handle_response(helper.register_as_metric_stream_receiver(
       g_config.stream_server_address,
       g_config.stream_server_port
@@ -150,7 +150,7 @@ void register_as_stream_receiver() {
 
 void deregister_as_stream_receiver() {
    std::cout << "Deregistering as stream receiver" << std::endl;
-   crate::metrics::streams::helper helper(g_config.address, g_config.http_port);
+   crate::metrics::streams::helper_c helper(g_config.address, g_config.http_port);
    handle_response(helper.deregister_as_metric_stream_receiver(
       g_config.stream_server_address,
       g_config.stream_server_port
