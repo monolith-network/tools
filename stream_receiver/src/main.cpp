@@ -6,7 +6,7 @@
 #include <csignal>
 #include <atomic>
 #include <crate/networking/message_server.hpp>
-#include <crate/metrics/streams/stream_data.hpp>
+#include <crate/metrics/streams/stream_data_v1.hpp>
 #include <crate/externals/simplejson/json.hpp>
 
 using namespace std::chrono_literals;

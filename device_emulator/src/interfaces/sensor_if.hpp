@@ -5,7 +5,7 @@
 #include <string>
 #include "types.hpp"
 #include "environment.hpp"
-#include <crate/metrics/reading.hpp>
+#include <crate/metrics/reading_v1.hpp>
 #include <crate/externals/uuid4/uuid4.h>
 
 namespace demu {
