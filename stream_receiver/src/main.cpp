@@ -102,7 +102,7 @@ void load_config(const std::string& file) {
 
    // Build the path that allos us to deregister
    //
-   deregistration_path = "/metric/stream/del/" + 
+   deregistration_path = "/metric/stream/delete/" + 
                            g_config.stream_server_address + 
                            "/" + 
                            std::to_string(g_config.stream_server_port);
