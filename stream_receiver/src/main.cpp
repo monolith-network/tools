@@ -12,10 +12,13 @@
 using namespace std::chrono_literals;
 namespace {
    struct configuration {
+      // Local
       std::string stream_server_address;
       uint32_t stream_server_port {0};
-      std::string metra_address;
-      uint32_t metra_port {0};
+
+      // Remote
+      std::string address;
+      uint32_t http_port {0};
    };
 
    std::atomic<bool> active {true};
@@ -74,19 +77,19 @@ void load_config(const std::string& file) {
       std::exit(1); 
    }
 
-   std::optional<std::string> metra_address = tbl["metra"]["address"].value<std::string>();
-   if (metra_address.has_value()) {
-      g_config.metra_address = *metra_address;
+   std::optional<std::string> address = tbl["monolith"]["address"].value<std::string>();
+   if (address.has_value()) {
+      g_config.address = *address;
    } else {
-      std::cout << "Missing config for 'metra address'\n";
+      std::cout << "Missing config for 'address'\n";
       std::exit(1); 
    }
 
-   std::optional<uint32_t> metra_port = tbl["metra"]["port"].value<uint32_t>();
-   if (metra_port.has_value()) {
-      g_config.metra_port = *metra_port;
+   std::optional<uint32_t> http_port = tbl["monolith"]["http_port"].value<uint32_t>();
+   if (http_port.has_value()) {
+      g_config.http_port = *http_port;
    } else {
-      std::cout << "Missing config for 'metra port'\n";
+      std::cout << "Missing config for 'http port'\n";
       std::exit(1); 
    }
 
@@ -119,7 +122,7 @@ void load_config(const std::string& file) {
 
    // Register with the server with metra 
    //
-   http_client = new httplib::Client(g_config.metra_address, g_config.metra_port);
+   http_client = new httplib::Client(g_config.address, g_config.http_port);
 }
 
 void issue_command(const std::string& cmd) {

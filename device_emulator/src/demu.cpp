@@ -65,21 +65,21 @@ int main(int argc, char **argv) {
 
    // Submit the node for registration
    //
-   crate::registrar::submitter registrar_submitter(g_config.registrar_address, g_config.registrar_port);
+   crate::registrar::submitter registrar_submitter(g_config.address, g_config.http_port);
    if (registrar_submitter.submit(demu) != crate::registrar::submitter::result::SUCCESS) {
       std::cerr << "\nFailed to register node with registrar" << std::endl;
       std::exit(1);
    }
 
    auto writer = crate::networking::message_writer(
-      g_config.submission_server_address, 
-      g_config.submission_server_port
+      g_config.address, 
+      g_config.metric_submission_port
    );
 
    std::cout << "SUCCESS\n";
 
-   std::cout << "Metric Destination::" << g_config.submission_server_address << ":"
-               << g_config.submission_server_port << std::endl;
+   std::cout << "Metric Destination::" << g_config.address << ":"
+               << g_config.metric_submission_port << std::endl;
 
    while (true) {
       std::this_thread::sleep_for(1s);

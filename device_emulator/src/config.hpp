@@ -16,10 +16,9 @@ namespace demu {
       std::string location_name;
       std::vector<sensor_if*> sensors;
       std::vector<environment_details> env_details;
-      std::string submission_server_address;
-      short submission_server_port;
-      std::string registrar_address;
-      short registrar_port;
+      std::string address;
+      uint32_t http_port;
+      uint32_t metric_submission_port;
    };
 
    extern std::optional<configuration> load_config(const std::string& file, environment &env);

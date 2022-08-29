@@ -7,7 +7,8 @@ sensors = [
 environment_detail = [
    "dry", "high_traffic", "hot"
 ]
-submission_server_address = "0.0.0.0"
-submission_server_port = 8081
-registrar_address = "0.0.0.0"
-registrar_port = 4096
+
+[monolith]
+address = "0.0.0.0"
+http_port = 8080
+metric_submission_port = 9000

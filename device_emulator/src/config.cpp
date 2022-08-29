@@ -44,36 +44,27 @@ std::optional<configuration> load_config(const std::string& file, environment &e
       return {}; 
    }
 
-   
-   std::optional<std::string> submission_server_address = tbl["demu"]["submission_server_address"].value<std::string>();
-   if (submission_server_address.has_value()) {
-      config.submission_server_address = *submission_server_address;
+   std::optional<std::string> monoloth_address = tbl["monolith"]["address"].value<std::string>();
+   if (monoloth_address.has_value()) {
+      config.address = *monoloth_address;
    } else {
-      std::cout << "Missing config for 'submission server address'\n";
+      std::cout << "Missing config for 'address'\n";
       return {}; 
    }
    
-   std::optional<short> submission_server_port = tbl["demu"]["submission_server_port"].value<short>();
-   if (submission_server_port.has_value()) {
-      config.submission_server_port = *submission_server_port;
+   std::optional<uint32_t> http_port = tbl["monolith"]["http_port"].value<uint32_t>();
+   if (http_port.has_value()) {
+      config.http_port = *http_port;
    } else {
-      std::cout << "Missing config for 'submission server port'\n";
-      return {}; 
-   }
-
-   std::optional<std::string> registrar_address = tbl["demu"]["registrar_address"].value<std::string>();
-   if (registrar_address.has_value()) {
-      config.registrar_address = *registrar_address;
-   } else {
-      std::cout << "Missing config for 'registrar address'\n";
+      std::cout << "Missing config for 'http port'\n";
       return {}; 
    }
    
-   std::optional<short> registrar_port = tbl["demu"]["registrar_port"].value<short>();
-   if (registrar_port.has_value()) {
-      config.registrar_port = *registrar_port;
+   std::optional<uint32_t> metric_submission_port = tbl["monolith"]["metric_submission_port"].value<uint32_t>();
+   if (metric_submission_port.has_value()) {
+      config.metric_submission_port = *metric_submission_port;
    } else {
-      std::cout << "Missing config for 'registration port'\n";
+      std::cout << "Missing config for 'http port'\n";
       return {}; 
    }
 

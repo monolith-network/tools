@@ -44,8 +44,7 @@ project_libs = {
 }
 
 project_apps = {
-   "rekdb":"git@github.com:infonet-dev/rekdb.git",
-   "metra":"git@github.com:infonet-dev/metra.git"
+   "monolith":"git@github.com:infonet-dev/monolith.git",
 }
 
 working_dir = os.getcwd()
