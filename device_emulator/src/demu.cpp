@@ -7,7 +7,7 @@
 #include <csignal>
 #include <iostream>
 #include <nettle/Writer.hpp>
-#include <crate/registrar/submitter.hpp>
+#include <crate/registrar/helper.hpp>
 #include <crate/networking/message_writer.hpp>
 
 using namespace std::chrono_literals;
@@ -65,8 +65,8 @@ int main(int argc, char **argv) {
 
    // Submit the node for registration
    //
-   crate::registrar::submitter registrar_submitter(g_config.address, g_config.http_port);
-   if (registrar_submitter.submit(demu) != crate::registrar::submitter::result::SUCCESS) {
+   crate::registrar::helper registrar_helper(g_config.address, g_config.http_port);
+   if (registrar_helper.submit(demu) != crate::registrar::helper::result::SUCCESS) {
       std::cerr << "\nFailed to register node with registrar" << std::endl;
       std::exit(1);
    }

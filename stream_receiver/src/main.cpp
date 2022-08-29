@@ -8,6 +8,7 @@
 #include <crate/networking/message_server.hpp>
 #include <crate/metrics/streams/stream_data_v1.hpp>
 #include <crate/externals/simplejson/json.hpp>
+#include <crate/metrics/streams/helper.hpp>
 
 using namespace std::chrono_literals;
 namespace {
@@ -41,8 +42,6 @@ namespace {
 
    receiver message_receiver;
    configuration g_config;
-   std::string registration_path;
-   std::string deregistration_path;
    httplib::Client* http_client {nullptr};
    crate::networking::message_server* server {nullptr};
    std::atomic<bool> handling_signal {false};
@@ -92,20 +91,6 @@ void load_config(const std::string& file) {
       std::cout << "Missing config for 'http port'\n";
       std::exit(1); 
    }
-
-   // Build the path that will allow us to register with Metra
-   //
-   registration_path = "/metric/stream/add/" + 
-                        g_config.stream_server_address + 
-                        "/" + 
-                        std::to_string(g_config.stream_server_port);
-
-   // Build the path that allos us to deregister
-   //
-   deregistration_path = "/metric/stream/delete/" + 
-                           g_config.stream_server_address + 
-                           "/" + 
-                           std::to_string(g_config.stream_server_port);
    
    
    // Start the server with the receiver that will dump everything
@@ -125,54 +110,51 @@ void load_config(const std::string& file) {
    http_client = new httplib::Client(g_config.address, g_config.http_port);
 }
 
-void issue_command(const std::string& cmd) {
-
-   std::cout << "Issue: " << cmd << std::endl;
-
-   auto result = http_client->Get(cmd);
-   
-   if (!result || (result.error() != httplib::Error::Success)) {
-      std::cerr << "Error issuing command to endpoint: " << cmd << std::endl;
-      std::exit(1);
-   }
-
-   json::jobject json_result;
-   if (!json::jobject::tryparse(result->body.c_str(), json_result)) {
-      std::cerr << "Failed to parse json from server: " << result->body.c_str() << std::endl;
-      std::exit(1);
-   }
-
-   if (json_result.has_key("status")) {
-
-      if (json_result["status"].as_string() == "400") {
-         std::cerr << "Got a `400` code" << std::endl;
+void handle_response(crate::metrics::streams::helper::result result) {
+   switch (result) {
+      case crate::metrics::streams::helper::result::SUCCESS: {
+         std::cout << "SUCCESS" << std::endl;
+         return;
+      }
+      case crate::metrics::streams::helper::result::UNABLE_TO_REACH_MONOLITH: {
+         std::cerr << "UNABLE_TO_REACH_MONOLITH" << std::endl;
          std::exit(1);
       }
-
-      if (json_result["status"].as_string() == "500") {
-         std::cerr << "Got a `500` code" << std::endl;
+      case crate::metrics::streams::helper::result::FAILED_TO_PARSE_RESPONSE: {
+         std::cerr << "FAILED_TO_PARSE_RESPONSE" << std::endl;
          std::exit(1);
       }
-
-      if (json_result["status"].as_string() != "200") {
-         std::cerr << "Failed to get a `200` code" << std::endl;
+      case crate::metrics::streams::helper::result::INTERNAL_SERVER_ERROR: {
+         std::cerr << "INTERNAL_SERVER_ERROR" << std::endl;
          std::exit(1);
       }
-
-      if (json_result.has_key("data")) {
-         if (json_result["data"].as_string() != "success") {
-            std::cerr << "Did not get a `success` from the server" << std::endl;
-            std::exit(1);
-         } else {
-
-            // All good :)
-            return;
-         }
+      case crate::metrics::streams::helper::result::UNKNOWN_ERROR: {
+         std::cerr << "UNKNOWN_ERROR" << std::endl;
+         std::exit(1);
       }
-      
-   } else {
-      std::cerr << "Unknown result from submitting command to endpoint\n";
+      case crate::metrics::streams::helper::result::BAD_REQUEST: {
+         std::cerr << "BAD_REQUEST" << std::endl;
+         std::exit(1);
+      }
    }
+}
+
+void register_as_stream_receiver() {
+   std::cout << "Registering as stream receiver" << std::endl;
+   crate::metrics::streams::helper helper(g_config.address, g_config.http_port);
+   handle_response(helper.register_as_metric_stream_receiver(
+      g_config.stream_server_address,
+      g_config.stream_server_port
+   ));
+}
+
+void deregister_as_stream_receiver() {
+   std::cout << "Deregistering as stream receiver" << std::endl;
+   crate::metrics::streams::helper helper(g_config.address, g_config.http_port);
+   handle_response(helper.deregister_as_metric_stream_receiver(
+      g_config.stream_server_address,
+      g_config.stream_server_port
+   ));
 }
 
 void handle_signal(int signal) {
@@ -203,9 +185,9 @@ int main(int argc, char** argv) {
 
    load_config(argv[1]);
 
-   // register with metra
+   // register with monolith
    //
-   issue_command(registration_path);
+   register_as_stream_receiver();
 
    while(active.load()) {
       std::this_thread::sleep_for(1s);
@@ -213,7 +195,7 @@ int main(int argc, char** argv) {
 
    // Deregister 
    //
-   issue_command(deregistration_path);
+   deregister_as_stream_receiver();
 
    return 0;
 }  
