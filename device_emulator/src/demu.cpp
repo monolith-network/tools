@@ -9,6 +9,7 @@
 #include <nettle/Writer.hpp>
 #include <crate/registrar/helper.hpp>
 #include <crate/networking/message_writer.hpp>
+#include <crate/metrics/helper.hpp>
 
 using namespace std::chrono_literals;
 
@@ -71,9 +72,10 @@ int main(int argc, char **argv) {
       std::exit(1);
    }
 
-   auto writer = crate::networking::message_writer_c(
-      g_config.address, 
-      g_config.metric_submission_port
+   crate::metrics::helper_c metric_helper(
+      crate::metrics::helper_c::endpoint_type_e::HTTP,
+      g_config.address,
+      g_config.http_port
    );
 
    std::cout << "SUCCESS\n";
@@ -87,13 +89,8 @@ int main(int argc, char **argv) {
       for(auto sensor : g_config.sensors) {
          auto reading = sensor->get_value();
 
-         std::string encoded_reading;
-         reading.encode_to(encoded_reading);
-
-         bool okay {false};
-         writer.write(encoded_reading, okay);
-         if (!okay) {
-            std::cerr << "Writer has experienced an error\n";
+         if (metric_helper.submit(reading)  != crate::metrics::helper_c::result::SUCCESS) {
+            std::cerr << "Failed to write metric" << std::endl;
             std::exit(1);
          }
       }
