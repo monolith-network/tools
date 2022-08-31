@@ -46,7 +46,7 @@ namespace demu {
       std::string get_node_id() const { return _node_id; }
       std::string get_uuid() const { return _uuid; }
       int64_t get_timestamp() {
-         return std::chrono::duration_cast<std::chrono::milliseconds>(
+         return std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::system_clock::now().time_since_epoch()
          ).count();
       }
