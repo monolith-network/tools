@@ -26,6 +26,7 @@ requirements = [
    "build-essential",
    "cmake",
    "pkg-config",
+   "liblua5.3-dev"
    "librocksdb-dev",
    "libsqlite3-dev"
 ]
