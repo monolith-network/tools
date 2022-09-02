@@ -7,7 +7,7 @@
 namespace demu {
 class temperature : public sensor_if{
 public:
-   temperature(std::string id, environment& env) : sensor_if(id, env, sensor_type::TEMPERATURE) {}
+   temperature(std::string id, environment& env) : sensor_if(id, env, sensor_type::TEMPERATURE, "58eb7f04-30f3-4a0c-94b7-c6f140870d1d") {}
    virtual crate::metrics::sensor_reading_v1_c get_value() override final {
       return crate::metrics::sensor_reading_v1_c(
          get_timestamp(), 

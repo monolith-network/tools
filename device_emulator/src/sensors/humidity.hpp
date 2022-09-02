@@ -7,7 +7,7 @@
 namespace demu {
 class humidity : public sensor_if{
 public:
-   humidity(std::string id, environment& env) : sensor_if(id, env, sensor_type::HUMIDITY) {}
+   humidity(std::string id, environment& env) : sensor_if(id, env, sensor_type::HUMIDITY, "44d7dae7-49a5-4510-b589-b62c468184f0") {}
    virtual crate::metrics::sensor_reading_v1_c get_value() override final {
       return crate::metrics::sensor_reading_v1_c(
          get_timestamp(), 

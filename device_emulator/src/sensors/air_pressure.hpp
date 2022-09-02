@@ -8,7 +8,7 @@ namespace demu {
 
 class air_pressure : public sensor_if{
 public:
-   air_pressure(std::string id, environment& env) : sensor_if(id, env, sensor_type::AIR_PRESSURE) {}
+   air_pressure(std::string id, environment& env) : sensor_if(id, env, sensor_type::AIR_PRESSURE, "0c23501a-3fb6-42f5-88eb-071e7a74b7d6") {}
    virtual crate::metrics::sensor_reading_v1_c get_value() override final {
       return crate::metrics::sensor_reading_v1_c(
          get_timestamp(), 

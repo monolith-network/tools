@@ -6,7 +6,6 @@
 #include "types.hpp"
 #include "environment.hpp"
 #include <crate/metrics/reading_v1.hpp>
-#include <crate/externals/uuid4/uuid4.h>
 
 namespace demu {
    enum class sensor_type {
@@ -33,13 +32,8 @@ namespace demu {
    class sensor_if {
    public:
       sensor_if() = delete;
-      sensor_if(std::string node_id, environment &env, const sensor_type type) : 
-         _node_id(node_id), _env(env), _type(type)  {
-            char u[UUID4_LEN];
-            uuid4_init();
-            uuid4_generate(u);
-            _uuid = std::string(u);
-         }
+      sensor_if(std::string node_id, environment &env, const sensor_type type, std::string uuid) : 
+         _node_id(node_id), _env(env), _type(type), _uuid(uuid)  {}
       virtual ~sensor_if(){}
       virtual crate::metrics::sensor_reading_v1_c get_value() = 0;
       sensor_type get_type() const { return _type; }

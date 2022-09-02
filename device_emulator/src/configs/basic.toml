@@ -1,5 +1,5 @@
 [demu]
-device_name = "sensor_0"
+device_name = "demu_node"
 location_name = "bedroom"
 sensors = [
    "temperature", "motion", "humidity", "air_pressure", "flame", "light"

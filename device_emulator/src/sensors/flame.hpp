@@ -7,7 +7,7 @@
 namespace demu {
 class flame : public sensor_if{
 public:
-   flame(std::string id, environment& env) : sensor_if(id, env, sensor_type::FLAME) {}
+   flame(std::string id, environment& env) : sensor_if(id, env, sensor_type::FLAME, "f360c409-2c4d-420f-bf2d-56c9056d6583") {}
    virtual crate::metrics::sensor_reading_v1_c get_value() override final {
       return crate::metrics::sensor_reading_v1_c(
          get_timestamp(), 
