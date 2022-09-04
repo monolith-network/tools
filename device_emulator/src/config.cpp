@@ -44,6 +44,14 @@ std::optional<configuration> load_config(const std::string& file, environment &e
       return {}; 
    }
 
+   std::optional<uint32_t> controller_port = tbl["demu"]["controller_port"].value<uint32_t>();
+   if (controller_port.has_value()) {
+      config.controller_port = *controller_port;
+   } else {
+      std::cout << "Missing config for 'controller port'\n";
+      return {}; 
+   }
+
    std::optional<std::string> monoloth_address = tbl["monolith"]["address"].value<std::string>();
    if (monoloth_address.has_value()) {
       config.address = *monoloth_address;

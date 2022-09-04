@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <crate/networking/message_server.hpp>
 
 namespace demu {
 
@@ -17,6 +18,8 @@ public:
    uint8_t poll_light();
    uint8_t poll_flames();
    bool is_active();
+
+   void extinguish_flames();
 private:
    std::vector<environment_details> _details;
    struct levels {

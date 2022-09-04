@@ -19,6 +19,7 @@ namespace demu {
       std::string address;
       uint32_t http_port;
       uint32_t metric_submission_port;
+      uint32_t controller_port;
    };
 
    extern std::optional<configuration> load_config(const std::string& file, environment &env);

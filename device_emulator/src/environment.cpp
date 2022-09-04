@@ -98,6 +98,13 @@ bool environment::is_active()
    return level.activity;
 }
 
+void environment::extinguish_flames()
+{
+   level.flames = range.flames_low;
+   has_fire = 0;
+   std::cout << "< Fire has been extinguished >" << std::endl;
+}
+
 void environment::update()
 {
    auto dbl_rand = libutil::random::generate_random_c<double>();

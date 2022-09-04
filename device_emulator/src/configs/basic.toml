@@ -7,6 +7,7 @@ sensors = [
 environment_detail = [
    "dry", "high_traffic", "hot"
 ]
+controller_port = 9001
 
 [monolith]
 address = "0.0.0.0"
