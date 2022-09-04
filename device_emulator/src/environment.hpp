@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <vector>
 #include <crate/networking/message_server.hpp>
+#include <chrono>
 
 namespace demu {
 
@@ -21,6 +22,8 @@ public:
 
    void extinguish_flames();
 private:
+   static constexpr double FIRE_START_COOLDOWN_SEC = 15.0;
+
    std::vector<environment_details> _details;
    struct levels {
       double temperature {70.0};
@@ -49,6 +52,8 @@ private:
    bool is_hot{false};
    bool is_dry{false};
    void update();
+
+    std::chrono::time_point<std::chrono::steady_clock> _last_fire_extinguish;
 };
 
 } // namespace demu

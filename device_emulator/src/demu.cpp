@@ -29,7 +29,7 @@ namespace {
    public:
       virtual void receive_message(std::string message) override final {
 
-         std::cout << "Received controller action request" << std::endl;
+         std::cout << "< received controller action request >" << std::endl;
 
          crate::control::action_v1_c action;
          if (!action.decode_from(message)) {

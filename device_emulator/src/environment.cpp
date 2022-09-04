@@ -55,6 +55,8 @@ void environment::configure(std::vector<environment_details> details) {
    level.light = u32_rand.get_range(range.light_low, range.light_high);
    level.flames = u8_rand.get_range(range.flames_low, range.flames_high);
    level.activity = u8_rand.get_range(0, 10) <= range.activity_prob;
+
+   _last_fire_extinguish = std::chrono::steady_clock::now();
 }
 
 double environment::poll_temperature()
@@ -102,7 +104,8 @@ void environment::extinguish_flames()
 {
    level.flames = range.flames_low;
    has_fire = 0;
-   std::cout << "< Fire has been extinguished >" << std::endl;
+   std::cout << "< fire has been extinguished >" << std::endl;
+   _last_fire_extinguish = std::chrono::steady_clock::now();
 }
 
 void environment::update()
@@ -113,7 +116,9 @@ void environment::update()
 
    //    Check to see if we should start a fire
    //
-   if (!has_fire) {
+   auto now = std::chrono::steady_clock::now();
+   std::chrono::duration<double> fire_diff = now - _last_fire_extinguish;
+   if (!has_fire && fire_diff.count() >= FIRE_START_COOLDOWN_SEC) {
       if (is_hot && is_dry && level.temperature > 90.0) {
          has_fire = u8_rand.get_range(0, 1);
       } else {
@@ -124,8 +129,10 @@ void environment::update()
             has_fire = true;
          }
       }
-   } else {
-      has_fire = u8_rand.get_range(0, 1);
+
+      if (has_fire) {
+         std::cout << "< a fire has spawned >" << std::endl;
+      }
    }
    level.flames = u8_rand.get_range(range.flames_low, range.flames_high);
 
