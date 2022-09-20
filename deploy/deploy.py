@@ -26,9 +26,10 @@ requirements = [
    "build-essential",
    "cmake",
    "pkg-config",
-   "liblua5.3-dev"
+   "liblua5.3-dev",
    "librocksdb-dev",
-   "libsqlite3-dev"
+   "libsqlite3-dev",
+   "libcurl4-openssl-dev"
 ]
 
 pre_build_scripts = [
